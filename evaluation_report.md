@@ -138,4 +138,4 @@ This evaluation tests the RAG system against 5 planned questions from the evalua
 
 **3 fully accurate, 1 partially accurate, 1 failure, 1 correct grounding rejection.**
 
-The system performs well on professors with distinctive vocabulary in their reviews (Morales, Fuller, Zarif) and struggles with professors whose review language overlaps semantically with other professors in the corpus (Rose). The grounding mechanism works correctly — the system never hallucinated an answer outside its document scope.
+The system performs well on professors with distinctive vocabulary in their reviews (Morales, Fuller, Zarif) and struggles with professors whose review language overlaps semantically with other professors in the corpus (Rose). The grounding mechanism works correctly — the system never hallucinated an answer outside its document scope.s
