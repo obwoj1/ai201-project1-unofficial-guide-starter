@@ -9,114 +9,65 @@
 
 ## Domain
 
-<!-- What domain did you choose? Why is this knowledge valuable and hard to find through official channels? -->
+This guide covers student-generated reviews of professors at Morgan State University, sourced from Rate My Professors. This knowledge is valuable because official university channels never tell you how a professor actually teaches, grades, or treats students in reality. Students rely on word of mouth and review sites to make informed decisions about which professors to take — this system makes that scattered knowledge searchable and answerable in one place.
 
 ---
 
 ## Documents
 
-<!-- List your specific sources: URLs, subreddit names, forum threads, or file descriptions.
-     Aim for at least 10 sources that together cover different subtopics or perspectives within your domain. -->
-
 | # | Source | Description | URL or location |
 |---|--------|-------------|-----------------|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
-| 4 | | | |
-| 5 | | | |
-| 6 | | | |
-| 7 | | | |
-| 8 | | | |
-| 9 | | | |
-| 10 | | | |
+| 1 | Rate My Professors | Benjamin Morgan, Engineering (CMGT420) | documents/ProfBenjamin.txt |
+| 2 | Rate My Professors | Harold Morales, Religion (RELG305) | documents/ProfHarold.txt |
+| 3 | Rate My Professors | Denise Rose, English (ENGL102) | documents/ProfDenise.txt |
+| 4 | Rate My Professors | Mahdi Gharagozloo, Business (BUAD699, ENTR655) | documents/ProfMahdi.txt |
+| 5 | Rate My Professors | Olukole Samuel, Biology (Biology202, Biology209) | documents/ProfOlukole.txt |
+| 6 | Rate My Professors | Julian Fuller, Mathematics (MATH110, MATH107) | documents/ProfJulian.txt |
+| 7 | Rate My Professors | Gerald Rameau, Biology (BIO101, BIOL106) | documents/ProjGerald.txt |
+| 8 | Rate My Professors | Jelani Zarif, Biology (BIOL405, BIOL210) | documents/ProfJelani.txt |
+| 9 | Rate My Professors | Safae Hamdoun, Biology (BIO310, BIOL210) | documents/ProfSafae.txt |
+| 10 | Rate My Professors | Paminas Mayaka, Mathematics (MATH106, MATH113) | documents/ProfPaminas.txt |
 
 ---
 
 ## Chunking Strategy
 
-<!-- How will you split documents into chunks?
-     State your chunk size (in tokens or characters), overlap size, and explain why those
-     numbers fit the structure of your documents.
-     A review-heavy corpus warrants different chunking than a long FAQ. -->
+**Chunk size:** 300 characters
 
-**Chunk size:**
+**Overlap:** 50 characters
 
-**Overlap:**
-
-**Reasoning:**
+**Reasoning:** Our documents are short, opinion-based student reviews — most individual reviews are only 2–5 sentences long. Using a small chunk size of 300 characters means each chunk captures one complete student review or a focused part of it, rather than blending multiple reviews together. A 50-character overlap ensures that if a key thought spans two chunks, both chunks carry enough context to be retrievable. Larger chunks would dilute the specific opinions we want to match against queries.
 
 ---
 
 ## Retrieval Approach
 
-<!-- Which embedding model are you using (e.g., all-MiniLM-L6-v2 via sentence-transformers)?
-     How many chunks will you retrieve per query (top-k)?
-     If you were deploying this for real users and cost wasn't a constraint, what tradeoffs
-     would you weigh in choosing a different embedding model — context length, multilingual
-     support, accuracy on domain-specific text, latency? -->
+**Embedding model:** all-MiniLM-L6-v2 via sentence-transformers (runs locally, no API key needed)
 
-**Embedding model:**
+**Top-k:** 5 chunks per query
 
-**Top-k:**
-
-**Production tradeoff reflection:**
+**Production tradeoff reflection:** If deploying for real users, I would consider OpenAI's text-embedding-3-large for higher accuracy on nuanced opinion text, but it comes with API costs and rate limits. For a multilingual student body, a multilingual model like paraphrase-multilingual-MiniLM-L12-v2 would be worth the tradeoff. For latency-sensitive use, a locally hosted model like all-MiniLM-L6-v2 is ideal. Top-k of 5 gives the LLM enough context without flooding it with loosely related reviews.
 
 ---
 
 ## Evaluation Plan
 
-<!-- List your 5 test questions with their expected correct answers.
-     Questions should be specific enough that you can judge whether the system's response
-     is right or wrong. "What are good dining halls?" is too vague.
-     "What do students say about wait times at [dining hall name] during lunch?" is testable. -->
-
 | # | Question | Expected answer |
 |---|----------|-----------------|
-| 1 | | |
-| 2 | | |
-| 3 | | |
-| 4 | | |
-| 5 | | |
+| 1 | What do students say about Professor Fuller's grading in MATH110? | Students say homework barely counts and tests make or break your grade. No extra credit or retakes given. |
+| 2 | Is Professor Samuel easy or hard? | Professor Samuel is considered easy to very easy — difficulty rated 1.4/5 and 100% of students would take him again. |
+| 3 | What is the workload like in Professor Morales' RELG305 class? | Extremely heavy — multiple 10-page quizzes per week with only 7 minutes to complete, plus long essays and weekly summaries. |
+| 4 | Do students recommend Professor Zarif for Biology? | Yes — 82% would take him again. Students say attending lectures, reading the textbook, and doing homework leads to success. |
+| 5 | How does Professor Rose treat students in ENGL102? | Reviews are very negative — students say she is rude, yells, gives no feedback, comes late and unprepared, and almost no one gets an A. |
 
 ---
 
 ## Anticipated Challenges
 
-<!-- What could go wrong? Name at least two specific risks with reasoning.
-     Consider: noisy or inconsistent documents, missing source attribution, off-topic
-     retrieval, chunks that split key information across boundaries. -->
+1. **Sparse reviews for some professors:** Professor Morgan only has 1 review and Professor Gharagozloo has short reviews with little detail. Queries about these professors may return weak or incomplete answers because there simply isn't enough source material to draw from.
 
-1.
-
-2.
+2. **Multiple Biology professors causing retrieval confusion:** Five of our ten documents are Biology professors. A vague query like "Is the Biology professor hard?" may retrieve chunks from multiple professors and produce a blended or confusing answer. The system needs to retrieve professor-specific chunks rather than mixing reviews across professors.
 
 ---
 
 ## Architecture
-
-<!-- Draw a diagram of your pipeline showing the five stages:
-     Document Ingestion → Chunking → Embedding + Vector Store → Retrieval → Generation
-     Label each stage with the tool or library you're using.
-     You can use ASCII art, a Mermaid diagram, or embed a sketch as an image.
-     You'll use this diagram as context when prompting AI tools to implement each stage. -->
-
----
-
-## AI Tool Plan
-
-<!-- For each part of the pipeline below, describe:
-     - Which AI tool you plan to use (Claude, Copilot, ChatGPT, etc.)
-     - What you'll give it as input (which sections of this planning.md, which requirements)
-     - What you expect it to produce
-     - How you'll verify the output matches your spec
-
-     "I'll use AI to help me code" is not a plan.
-     "I'll give Claude my Chunking Strategy section and ask it to implement chunk_text()
-     with my specified chunk size and overlap" is a plan. -->
-
-**Milestone 3 — Ingestion and chunking:**
-
-**Milestone 4 — Embedding and retrieval:**
-
-**Milestone 5 — Generation and interface:**
